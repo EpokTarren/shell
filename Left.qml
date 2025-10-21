@@ -51,7 +51,7 @@ RowLayout {
 
         Text {
             color: ToplevelManager.activeToplevel?.activated ? Settings.primary1 : Settings.primary1.replace("#", "#cc")
-            text: ToplevelManager.activeToplevel?.activated ? ToplevelManager.activeToplevel.appId : "「  %1  」".arg(["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "零"][Hyprland.focusedWorkspace?.id])
+            text: ToplevelManager.activeToplevel?.activated ? Settings.replaceId(ToplevelManager.activeToplevel.appId) : "「  %1  」".arg(["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "零"][Hyprland.focusedWorkspace?.id])
 
             font.pointSize: 12
             font.family: ToplevelManager.activeToplevel?.activated ? "JetBrains Mono" : "Noto Sans CJK JP"

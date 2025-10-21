@@ -1,5 +1,6 @@
 pragma Singleton
 import Quickshell
+import Quickshell.Io
 
 Singleton {
     readonly property string bg0: Theme.bg0 || "#271b1f"
@@ -12,4 +13,44 @@ Singleton {
     readonly property string primary3: Theme.primary3 || "#ffccd0"
     readonly property bool showBarMic: Config.showBarMic ?? true
     readonly property bool showBarVolume: Config.showBarVolume ?? true
+
+    readonly property var appidReplacers: Config.appIDReplacers ?? [
+        {
+            matcher: /-browser$/,
+            replacer: ""
+        },
+        {
+            matcher: /^steam_app_(\d+)$/,
+            replacer: (name, id) => appidResolver.names.get(id)
+        },
+    ].concat(Config.extraAppIDReplacers ?? [])
+
+    function replaceId(id) {
+        for (const {
+            matcher,
+            replacer
+        } of Settings.appidReplacers) {
+            const updated = id.replace(matcher, replacer);
+            if (updated != id)
+                return updated;
+        }
+        return id;
+    }
+
+    Process {
+        id: appidResolver
+        property var names: new Map()
+
+        running: true
+        command: ["/bin/sh", "-c", "grep name ~/.steam/steam/steamapps/appmanifest_*.acf"]
+        stdout: StdioCollector {
+            onStreamFinished: () => {
+                const names = this.text.split(/(\r?\n)+/).map(app => {
+                    const match = app.trim().match(/^.*\/appmanifest_(\d+).acf:\s+"name"\s+"(.*)"$/);
+                    return [match?.[1], match?.[2]];
+                }).filter(([a, b]) => a && b);
+                appidResolver.names = new Map(names);
+            }
+        }
+    }
 }
