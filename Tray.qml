@@ -18,7 +18,7 @@ Rectangle {
         anchor.rect.x: bar.width - width - 128
         anchor.rect.y: bar.height
         implicitWidth: 196
-        implicitHeight: menu.children.values.length * 24 + 16
+        implicitHeight: (menuListView.contentHeight ?? 0) + 16
         visible: !!menu.menu
         color: "transparent"
 
@@ -30,6 +30,7 @@ Rectangle {
         }
 
         ListView {
+            id: menuListView
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.topMargin: 8
@@ -43,10 +44,11 @@ Rectangle {
             delegate: Rectangle {
                 required property var model
                 width: parent.width
-                height: 24
+                height: model.isSeparator ? 16 : 24
                 color: !model.isSeparator && mouse.containsMouse ? Settings.bg2 : "transparent"
 
                 Text {
+                    visible: !model.isSeparator
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: 8
