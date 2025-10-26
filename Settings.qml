@@ -21,7 +21,7 @@ Singleton {
         },
         {
             matcher: /^steam_app_(\d+)$/,
-            replacer: (name, id) => appidResolver.names.get(id)
+            replacer: (name, id) => appidResolver.names.get(id) ?? "umu"
         },
     ].concat(Config.extraAppIDReplacers ?? [])
 
