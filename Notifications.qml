@@ -27,6 +27,7 @@ Singleton {
             notificationIpc.remove(notification.id);
 
             const notif = {
+                actions: notification.actions,
                 appIcon: notification.appIcon,
                 appName: notification.appName,
                 summary: notification.summary,

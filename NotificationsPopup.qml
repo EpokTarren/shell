@@ -35,6 +35,7 @@ PopupWindow {
 
         model: Notifications.display
         delegate: Rectangle {
+            id: notification
             required property var model
 
             color: Settings.bg0.replace("#", "#cc")
@@ -120,6 +121,36 @@ PopupWindow {
                     font.pointSize: 11
                     font.family: "JetBrains Mono"
                     color: Settings.plain
+                }
+
+                ListView {
+                    visible: notification.model.actions?.length
+                    Layout.preferredWidth: 368
+                    Layout.preferredHeight: 20
+                    model: notification.model.actions
+                    orientation: ListView.Horizontal
+                    spacing: 8
+
+                    delegate: Text {
+                        required property var model
+
+                        text: model.text
+                        font.pointSize: 11
+                        font.family: "JetBrains Mono"
+                        color: mouse.containsMouse ? Settings.comp0 : Settings.comp0.replace("#", "#cc")
+
+                        MouseArea {
+                            id: mouse
+                            anchors.fill: parent
+                            enabled: true
+                            hoverEnabled: true
+                            acceptedButtons: Qt.LeftButton
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: event => {
+                                model.modelData.invoke();
+                            }
+                        }
+                    }
                 }
             }
         }
