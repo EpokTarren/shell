@@ -71,11 +71,11 @@ PopupWindow {
                     Text {
                         Layout.preferredWidth: model.appIcon ? (parent.width - 40) : (parent.width - 20)
                         text: model.appName
-                        font.pointSize: 11
+                        font.pointSize: 12
                         font.bold: true
                         font.family: "JetBrains Mono"
                         elide: Text.ElideRight
-                        color: Settings.plain
+                        color: Settings.comp0
                     }
 
                     MouseArea {
@@ -93,7 +93,7 @@ PopupWindow {
 
                         Text {
                             text: ""
-                            font.pointSize: 11
+                            font.pointSize: 12
                             color: Settings.comp0
                         }
                     }
@@ -105,7 +105,8 @@ PopupWindow {
                     elide: Text.ElideRight
 
                     text: model.summary
-                    font.pointSize: 11
+                    textFormat: Text.StyledText
+                    font.pointSize: 12
                     font.family: "JetBrains Mono"
                     color: Settings.plain
                 }
@@ -118,13 +119,14 @@ PopupWindow {
                     wrapMode: Text.Wrap
 
                     text: model.body
+                    textFormat: Text.StyledText
                     font.pointSize: 11
                     font.family: "JetBrains Mono"
                     color: Settings.plain
                 }
 
                 ListView {
-                    visible: notification.model.actions?.length
+                    visible: notification.model.actions?.length > 0
                     Layout.preferredWidth: 368
                     Layout.preferredHeight: 20
                     model: notification.model.actions
@@ -154,7 +156,7 @@ PopupWindow {
                 }
 
                 Rectangle {
-                    visible: !IsNaN(model.progress)
+                    visible: !isNaN(model.progress)
                     Layout.preferredWidth: parent.width
                     Layout.preferredHeight: 4
                     Layout.topMargin: 4
