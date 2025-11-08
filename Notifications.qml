@@ -32,6 +32,7 @@ Singleton {
                 appName: notification.appName,
                 summary: notification.summary,
                 body: notification.body,
+                progress: notification.hints.value ?? null,
                 id: notification.id
             };
 

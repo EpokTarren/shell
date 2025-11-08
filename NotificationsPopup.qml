@@ -152,6 +152,23 @@ PopupWindow {
                         }
                     }
                 }
+
+                Rectangle {
+                    visible: !IsNaN(model.progress)
+                    Layout.preferredWidth: parent.width
+                    Layout.preferredHeight: 4
+                    Layout.topMargin: 4
+                    radius: 2
+                    color: Settings.bg2
+
+                    Rectangle {
+                        visible: model.progress
+                        width: Math.round(parent.width * Math.min(1.0, model.progress / 100))
+                        height: parent.height
+                        radius: 2
+                        color: Settings.comp0
+                    }
+                }
             }
         }
     }
