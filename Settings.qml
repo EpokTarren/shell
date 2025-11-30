@@ -13,6 +13,7 @@ Singleton {
     readonly property string primary3: Theme.primary3 || "#ffccd0"
     readonly property bool showBarMic: Config.showBarMic ?? true
     readonly property bool showBarVolume: Config.showBarVolume ?? true
+    readonly property list<string> knownBrowsers: Config.knownBrowsers ?? ["brave", "chromium", "firefox"]
 
     readonly property var appidReplacers: Config.appIDReplacers ?? [
         {
