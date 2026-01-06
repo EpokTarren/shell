@@ -8,14 +8,14 @@ PopupWindow {
     anchor.rect.y: bar.height + 16
     implicitWidth: 400
     color: "transparent"
-    visible: Notifications.display.length
-    implicitHeight: Math.min(16 + notificationDisplay.contentHeight, bar.screen?.height - 128)
+    visible: Notifications.display.length > 0 || Notifications.special != null
+    implicitHeight: notificationDisplay.height
 
     ListView {
         id: notificationDisplay
         implicitWidth: parent.width
         implicitHeight: 1440
-        height: parent.height
+        height: Math.min(16 + notificationDisplay.contentHeight, bar.screen?.height - 128)
 
         verticalLayoutDirection: ListView.TopToBottom
         orientation: ListView.Vertical

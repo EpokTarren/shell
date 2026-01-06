@@ -12,6 +12,7 @@ Singleton {
     property list<var> expiring: []
     property list<var> display: showAll ? all : active
     property bool showAll: false
+    property var special: null
     readonly property var ipc: notificationIpc
 
     NotificationServer {
@@ -21,7 +22,6 @@ Singleton {
         persistenceSupported: true
         bodySupported: true
         bodyMarkupSupported: true
-
         onNotification: notification => {
             notification.tracked = true;
             notificationIpc.remove(notification.id);
@@ -32,7 +32,7 @@ Singleton {
                 appName: notification.appName,
                 summary: notification.summary,
                 body: notification.body,
-                progress: notification.hints.value ?? null,
+                progress: notification.hints.value && notification.hints.value / 100,
                 id: notification.id
             };
 
@@ -80,15 +80,67 @@ Singleton {
         }
     }
 
+    Timer {
+        id: specialTimer
+        interval: 7500
+        running: false
+        repeat: false
+        onTriggered: notifications.special = null
+    }
+
+    function specialNotification(notification): void {
+        specialTimer.running = false;
+        specialTimer.running = true;
+        notification.id = -1;
+        notifications.special = notification;
+    }
+
     IpcHandler {
         id: notificationIpc
         target: "notifications"
+
+        function specialNotification(notification: string): void {
+            return notifications.specialNotification(JSON.parse(notification));
+        }
+
+        function mediaNotification(media: bool): void {
+            const volume = (Audio.muted ? "󰝟  " : "  ") + Math.round(Audio.volume * 100) + "%";
+
+            if (!Media.title)
+                return notifications.specialNotification({
+                    appName: volume,
+                    progress: Audio.volume,
+                    id: -1
+                });
+
+            const playPause = Media.player.playing ? "" : "";
+            const name = Media.player?.identity + " (" + playPause + ") " + volume;
+
+            let progress = "";
+            if (Media.player?.length) {
+                const pMins = Math.floor(Media.player.position / 60);
+                const pSecs = Math.floor(Media.player.position % 60).toString().padStart(2, '0');
+                const tMins = Math.floor(Media.player.length / 60);
+                const tSecs = Math.floor(Media.player.length % 60).toString().padStart(2, '0');
+                progress = pMins + ":" + pSecs + " / " + tMins + ":" + tSecs + " ";
+            }
+
+            return notifications.specialNotification({
+                appIcon: Media.player?.metadata?.["mpris:artUrl"],
+                appName: name,
+                summary: Media.title,
+                body: Media.artist ? "<i>%1</i> | ".arg(Media.artist) + progress : progress,
+                progress: media ? (Media.player?.length ? Media.player?.position / Media.player?.length : null) : Audio.volume,
+                id: -1
+            });
+        }
 
         function dismissAll(): void {
             notifications.all = [];
             notifications.active = [];
             server.trackedNotifications.values.forEach(v => v.dismiss());
             notifications.showAll = false;
+            notifications.special = null;
         }
 
         function hideAll(): void {
@@ -97,11 +149,17 @@ Singleton {
         }
 
         function dismissTop(): void {
+            if (notifications.special != null)
+                notifications.special = null;
+
             if (notifications.display.length > 0)
                 dismiss(notifications.display[0].id);
         }
 
         function dismiss(id: int): void {
+            if (id == -1)
+                notifications.special = null;
+
             notificationIpc.remove(id);
             server.trackedNotifications.values.forEach(n => {
                 if (n?.id == id)
@@ -115,6 +173,7 @@ Singleton {
         function remove(id: int): void {
             notifications.all = notifications.all.filter(n => n.id != id);
             notifications.active = notifications.active.filter(n => n.id != id);
+            notifications.expiring = notifications.expiring.filter(n => n.id != id);
         }
 
         function hide(id: int): void {
