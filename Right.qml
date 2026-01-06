@@ -90,7 +90,7 @@ RowLayout {
     Rectangle {
         color: Settings.bg0
         height: 32
-        Layout.preferredWidth: childrenRect.width + 9
+        Layout.preferredWidth: mic.length == 0 || volume.length == 0 ? 24 : 38
         visible: Settings.showBarVolume || (Settings.showBarMic && !Audio.micMuted)
 
         property var mic: !Settings.showBarMic || Audio.micMuted ? "" : " "
