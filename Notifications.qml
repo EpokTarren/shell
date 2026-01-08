@@ -114,7 +114,8 @@ Singleton {
                 });
 
             const playPause = Media.player.playing ? "" : "";
-            const name = Media.player?.identity + " (" + playPause + ") " + volume;
+            const name = Media.player?.identity + " (" + playPause + ")";
+            const appName = Settings.showBarVolume ? name + " " + volume : name;
 
             let progress = "";
             if (Media.player?.length) {
