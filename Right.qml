@@ -37,7 +37,7 @@ RowLayout {
         color: Settings.bg0
         height: 32
         width: 36
-        visible: UPower.displayDevice.isLaptopBattery && !UPower.onBattery && UPower.displayDevice.percentage > 0.99
+        visible: UPower.displayDevice.isLaptopBattery && UPower.displayDevice.state !== UPowerDeviceState.Charging && !UPower.onBattery
 
         Text {
             anchors.centerIn: parent
@@ -51,7 +51,7 @@ RowLayout {
         color: Settings.bg0
         height: 32
         width: 36
-        visible: UPower.displayDevice.isLaptopBattery && (UPower.displayDevice.percentage <= 0.99 || UPower.onBattery)
+        visible: UPower.displayDevice.isLaptopBattery && (UPower.displayDevice.state === UPowerDeviceState.Charging || UPower.onBattery)
 
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
