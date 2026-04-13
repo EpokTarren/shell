@@ -17,13 +17,15 @@ RowLayout {
         color: Settings.primary0
 
         height: 32
-        Layout.preferredWidth: Hyprland.workspaces.values.find(ws => ws.id > 5) != null ? 52 : 32
+        Layout.preferredWidth: secondTally.empty ? 32 : 52
 
         topLeftRadius: 10
         bottomLeftRadius: 10
         antialiasing: true
 
         WorkspaceTally {
+            displayEmpty: true
+
             start: 1
             height: 16
             width: 16
@@ -34,6 +36,8 @@ RowLayout {
         }
 
         WorkspaceTally {
+            id: secondTally
+
             start: 6
             height: 16
             width: 16
