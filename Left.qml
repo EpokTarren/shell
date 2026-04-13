@@ -65,6 +65,39 @@ RowLayout {
         }
     }
 
+    Rectangle {
+        visible: !thirdTally.empty || !fourthTally.empty
+        color: Settings.primary0
+
+        height: 32
+        Layout.preferredWidth: fourthTally.empty ? 24 : 44
+
+        WorkspaceTally {
+            id: thirdTally
+            displayEmpty: true
+
+            start: 11
+            height: 16
+            width: 16
+
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 4
+        }
+
+        WorkspaceTally {
+            id: fourthTally
+
+            start: 16
+            height: 16
+            width: 16
+
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 4
+        }
+    }
+
     Text {
         color: Settings.plain
         text: ToplevelManager.activeToplevel?.title.replace(new RegExp("\\s+.\\s+" + ToplevelManager.activeToplevel.appId.replace(/-\w+?$/i, suffix => "(" + suffix + ")?"), "i"), '') || ""
