@@ -16,12 +16,14 @@ RowLayout {
     Rectangle {
         color: Settings.primary0
 
-        height: 32
-        Layout.preferredWidth: secondTally.empty ? 32 : 52
+        property var offset: Settings.barRadius * 0.5
 
-        topLeftRadius: 10
-        bottomLeftRadius: 10
-        antialiasing: true
+        height: 32
+        Layout.preferredWidth: (secondTally.empty ? 24 : 44) + offset
+
+        topLeftRadius: Settings.barRadius
+        bottomLeftRadius: Settings.barRadius
+        antialiasing: Settings.barRadius > 0
 
         WorkspaceTally {
             displayEmpty: true
@@ -32,7 +34,7 @@ RowLayout {
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            anchors.leftMargin: 11
+            anchors.leftMargin: (4 + parent.offset)
         }
 
         WorkspaceTally {

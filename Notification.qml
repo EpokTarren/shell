@@ -13,8 +13,8 @@ Rectangle {
     border.color: Settings.comp0.replace("#", "#cc")
     border.pixelAligned: false
     border.width: 2
-    radius: 10
-    antialiasing: true
+    radius: Settings.radius
+    antialiasing: Settings.radius > 0
 
     height: childrenRect.height + 16
     width: parent.width - 16

@@ -157,11 +157,11 @@ RowLayout {
     Rectangle {
         color: Settings.comp0
         height: 32
-        Layout.preferredWidth: childrenRect.width + 14
+        Layout.preferredWidth: childrenRect.width + 8
 
-        topRightRadius: 10
-        bottomRightRadius: 10
-        antialiasing: true
+        topRightRadius: Settings.barRadius
+        bottomRightRadius: Settings.barRadius
+        antialiasing: Settings.barRadius > 0
 
         Text {
             color: Settings.bg0
@@ -171,7 +171,7 @@ RowLayout {
             font.family: "JetBrains Mono"
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            anchors.rightMargin: 8.5
+            anchors.rightMargin: 4
         }
     }
 }

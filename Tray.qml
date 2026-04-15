@@ -25,8 +25,8 @@ Rectangle {
         Rectangle {
             anchors.fill: parent
             color: Settings.bg0
-            antialiasing: true
-            radius: 10
+            antialiasing: Settings.radius > 0
+            radius: Settings.radius
         }
 
         ListView {

@@ -14,6 +14,9 @@ Singleton {
     readonly property bool showBarMic: Config.showBarMic ?? true
     readonly property bool showBarVolume: Config.showBarVolume ?? true
     readonly property list<string> knownBrowsers: Config.knownBrowsers ?? ["brave", "chromium", "firefox"]
+    readonly property var gap: Config.gap ?? 8
+    readonly property var radius: Config.radius ?? 10
+    readonly property var barRadius: Config.barRadius ?? (gap === 0 ? 0 : radius)
 
     readonly property var appidReplacers: Config.appIDReplacers ?? [
         {

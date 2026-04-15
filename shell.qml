@@ -21,9 +21,9 @@ Variants {
             }
 
             margins {
-                top: 8
-                left: 8
-                right: 8
+                top: Settings.gap
+                left: Settings.gap
+                right: Settings.gap
             }
 
             implicitHeight: 32
