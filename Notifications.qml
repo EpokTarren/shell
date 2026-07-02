@@ -12,6 +12,7 @@ Singleton {
     property list<var> expiring: []
     property list<var> display: showAll ? all : active
     property bool showAll: false
+    property var showSpecial: null
     property var special: null
     readonly property var ipc: notificationIpc
 
@@ -81,18 +82,59 @@ Singleton {
     }
 
     Timer {
-        id: specialTimer
-        interval: 7500
-        running: false
-        repeat: false
-        onTriggered: notifications.special = null
+        id: mediaTimer
+        interval: 50
+        running: notifications.showSpecial >= 2
+        repeat: true
+        onTriggered: mediaNotification()
     }
 
     function specialNotification(notification): void {
-        specialTimer.running = false;
-        specialTimer.running = true;
+        notifications.expiring = notifications.expiring.filter(n => n.id != -1);
         notification.id = -1;
+        notifications.showSpecial = 1;
+        notifications.expiring.push({
+            id: -1,
+            active: null,
+            expiration: +new Date + 7500
+        });
         notifications.special = notification;
+    }
+
+    function mediaNotification(): void {
+        const media = showSpecial === 3;
+        const volume = (Audio.muted ? "󰝟  " : "  ") + Math.round(Audio.volume * 100) + "%";
+
+        if (!Media.title || !Media.player) {
+            notifications.special = {
+                appName: volume,
+                progress: Audio.volume,
+                id: -1
+            };
+            return;
+        }
+
+        const playPause = Media.player.playing ? "" : "";
+        const name = Media.player.identity + " (" + playPause + ")";
+        const appName = Settings.showBarVolume || !media ? name + " " + volume : name;
+
+        let progress = "";
+        if (Media.player.length) {
+            const pMins = Math.floor(Media.player.position / 60);
+            const pSecs = Math.floor(Media.player.position % 60).toString().padStart(2, '0');
+            const tMins = Math.floor(Media.player.length / 60);
+            const tSecs = Math.floor(Media.player.length % 60).toString().padStart(2, '0');
+            progress = pMins + ":" + pSecs + " / " + tMins + ":" + tSecs + " ";
+        }
+
+        notifications.special = {
+            appIcon: Media.player.metadata?.["mpris:artUrl"],
+            appName: appName,
+            summary: Media.title,
+            body: Media.artist ? "<i>%1</i> | ".arg(Media.artist) + progress : progress,
+            progress: media ? (Media.player.length ? Math.min(1.0, Media.player.position / Media.player.length) : null) : Audio.volume,
+            id: -1
+        };
     }
 
     IpcHandler {
@@ -104,35 +146,13 @@ Singleton {
         }
 
         function mediaNotification(media: bool): void {
-            const volume = (Audio.muted ? "󰝟  " : "  ") + Math.round(Audio.volume * 100) + "%";
-
-            if (!Media.title)
-                return notifications.specialNotification({
-                    appName: volume,
-                    progress: Audio.volume,
-                    id: -1
-                });
-
-            const playPause = Media.player.playing ? "" : "";
-            const name = Media.player?.identity + " (" + playPause + ")";
-            const appName = Settings.showBarVolume ? name + " " + volume : name;
-
-            let progress = "";
-            if (Media.player?.length) {
-                const pMins = Math.floor(Media.player.position / 60);
-                const pSecs = Math.floor(Media.player.position % 60).toString().padStart(2, '0');
-                const tMins = Math.floor(Media.player.length / 60);
-                const tSecs = Math.floor(Media.player.length % 60).toString().padStart(2, '0');
-                progress = pMins + ":" + pSecs + " / " + tMins + ":" + tSecs + " ";
-            }
-
-            return notifications.specialNotification({
-                appIcon: Media.player?.metadata?.["mpris:artUrl"],
-                appName: name,
-                summary: Media.title,
-                body: Media.artist ? "<i>%1</i> | ".arg(Media.artist) + progress : progress,
-                progress: media ? (Media.player?.length ? Media.player?.position / Media.player?.length : null) : Audio.volume,
-                id: -1
+            notifications.expiring = notifications.expiring.filter(n => n.id != -1);
+            notifications.showSpecial = media ? 3 : 2;
+            notifications.mediaNotification();
+            notifications.expiring.push({
+                id: -1,
+                active: null,
+                expiration: +new Date + 7500
             });
         }
 
@@ -142,6 +162,7 @@ Singleton {
             server.trackedNotifications.values.forEach(v => v.dismiss());
             notifications.showAll = false;
             notifications.special = null;
+            notifications.showSpecial = null;
         }
 
         function hideAll(): void {
@@ -150,17 +171,13 @@ Singleton {
         }
 
         function dismissTop(): void {
-            if (notifications.special != null)
-                notifications.special = null;
-
-            if (notifications.display.length > 0)
-                dismiss(notifications.display[0].id);
+            if (notifications.showSpecial != null)
+                notificationIpc.remove(-1);
+            else if (notifications.display.length > 0)
+                notificationIpc.dismiss(notifications.display[0].id);
         }
 
         function dismiss(id: int): void {
-            if (id == -1)
-                notifications.special = null;
-
             notificationIpc.remove(id);
             server.trackedNotifications.values.forEach(n => {
                 if (n?.id == id)
@@ -172,6 +189,11 @@ Singleton {
         }
 
         function remove(id: int): void {
+            if (id == -1) {
+                notifications.showSpecial = null;
+                notifications.special = null;
+            }
+
             notifications.all = notifications.all.filter(n => n.id != id);
             notifications.active = notifications.active.filter(n => n.id != id);
             notifications.expiring = notifications.expiring.filter(n => n.id != id);

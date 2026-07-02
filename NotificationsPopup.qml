@@ -8,7 +8,7 @@ PopupWindow {
     anchor.rect.y: bar.height + 16
     implicitWidth: 400
     color: "transparent"
-    visible: Notifications.display.length > 0 || Notifications.special != null
+    visible: Notifications.display.length > 0 || Notifications.showSpecial != null
     implicitHeight: notificationDisplay.height
 
     ListView {
