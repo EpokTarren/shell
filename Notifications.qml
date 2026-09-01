@@ -203,8 +203,52 @@ Singleton {
             notifications.active = notifications.active.filter(n => n.id !== id);
         }
 
-        function toggleAll(id: int): void {
+        function toggleAll(): void {
             notifications.showAll = notifications.all.length > 0 && !notifications.showAll;
+        }
+
+        function action(): void {
+            let id = notifications.display[0]?.id;
+            if (id != null)
+                notificationIpc.menuActionOn(id);
+        }
+
+        function menuActionOn(id: int): void {
+            let notification = notifications.all.find(n => n.id == id);
+            if (!notification?.actions)
+                return;
+
+            notificationAction.stdinEnabled = true;
+            notificationAction.running = true;
+            notificationAction.actions = notification.actions.map(a => a.text).join("\n");
+            notificationAction.notification = id;
+        }
+
+        function actionOn(id: int, action: string): void {
+            let notification = notifications.all.find(n => n.id == id);
+            if (!notification?.actions)
+                return;
+
+            notification.actions.find(a => a.text.trim() == action)?.invoke();
+        }
+    }
+
+    Process {
+        id: notificationAction
+        property int notification: 0
+        property string actions: ""
+
+        running: false
+        command: Settings.menuCommand
+        onRunningChanged: {
+            write(actions);
+            notificationAction.stdinEnabled = false;
+        }
+
+        stdout: StdioCollector {
+            onStreamFinished: () => {
+                notificationIpc.actionOn(notificationAction.notification, this.text.trim());
+            }
         }
     }
 }

@@ -17,6 +17,7 @@ Singleton {
     readonly property var gap: Config.gap ?? 8
     readonly property var radius: Config.radius ?? 10
     readonly property var barRadius: Config.barRadius ?? (gap === 0 ? 0 : radius)
+    readonly property var menuCommand: Config.menuCommand ?? ["rofi", "-dmenu"]
 
     readonly property var appidReplacers: Config.appIDReplacers ?? [
         {
