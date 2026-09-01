@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import Quickshell
+import Quickshell.Hyprland
 
 PopupWindow {
     anchor.window: bar
@@ -8,7 +9,12 @@ PopupWindow {
     anchor.rect.y: bar.height + 16
     implicitWidth: 400
     color: "transparent"
-    visible: Notifications.display.length > 0 || Notifications.showSpecial != null
+    visible: {
+        if (Notifications.display.length == 0 && Notifications.showSpecial == null)
+            return false;
+        Hyprland.refreshToplevels();
+        return !Hyprland.activeToplevel?.lastIpcObject.fullscreen;
+    }
     implicitHeight: notificationDisplay.height
 
     ListView {
