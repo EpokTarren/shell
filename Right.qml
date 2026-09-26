@@ -28,6 +28,17 @@ RowLayout {
             color: Settings.comp0
             font.pointSize: 11
             font.family: "JetBrains Mono"
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                enabled: true
+                acceptedButtons: Qt.LeftButton
+
+                onClicked: if (Media.text) {
+                    Quickshell.clipboardText = Media.text;
+                }
+            }
         }
     }
 
@@ -172,6 +183,15 @@ RowLayout {
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: 4
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                enabled: true
+                acceptedButtons: Qt.LeftButton
+
+                onClicked: Quickshell.clipboardText = Qt.formatDateTime(clock.date, Qt.ISODate)
+            }
         }
     }
 }
