@@ -121,6 +121,34 @@ RowLayout {
     Rectangle {
         color: Settings.bg0
         height: 32
+        Layout.preferredWidth: childrenRect.width + 8
+        visible: Audio.output != null && Settings.showBarChannels(Audio.output)
+
+        Text {
+            color: Settings.comp0
+            text: Audio.output?.audio?.channels.length + "ch"
+            font.pointSize: 11
+            anchors.verticalCenter: parent.verticalCenter
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                enabled: Settings.channelsCommand.length > 0
+                acceptedButtons: Qt.LeftButton
+                onClicked: channelAction.running = true
+            }
+        }
+    }
+
+    Process {
+        id: channelAction
+        running: false
+        command: Settings.channelsCommand
+    }
+
+    Rectangle {
+        color: Settings.bg0
+        height: 32
         Layout.preferredWidth: 28
 
         property var textColor: Notifications.showAll || Notifications.all.length === 0 ? Settings.comp0.replace("#", "#80") : Settings.comp0

@@ -13,6 +13,8 @@ Singleton {
     readonly property string primary3: Theme.primary3 || "#ffccd0"
     readonly property bool showBarMic: Config.showBarMic ?? true
     readonly property bool showBarVolume: Config.showBarVolume ?? true
+    readonly property var showBarChannels: Config.showBarChannels ?? ((_) => false)
+    readonly property var channelsCommand: Config.channelsCommand ?? []
     readonly property list<string> knownBrowsers: Config.knownBrowsers ?? ["brave", "chromium", "firefox"]
     readonly property var gap: Config.gap ?? 8
     readonly property var radius: Config.radius ?? 10
