@@ -25,7 +25,7 @@ RowLayout {
             elide: Text.ElideRight
 
             text: Media.text
-            color: Settings.comp0
+            color: Media.player?.isPlaying ?Settings.comp0 : Settings.comp0.replace("#", "#cc")
             font.pointSize: 11
             font.family: "JetBrains Mono"
 
