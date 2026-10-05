@@ -79,7 +79,9 @@ Rectangle {
     }
 
     ListView {
-        anchors.centerIn: parent
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: 12
         width: childrenRect.width
         height: 32
         spacing: 8

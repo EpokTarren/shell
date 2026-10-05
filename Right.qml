@@ -42,150 +42,138 @@ RowLayout {
         }
     }
 
-    Tray {}
-
     Rectangle {
         color: Settings.bg0
-        height: 32
-        width: 36
-        visible: UPower.displayDevice.isLaptopBattery && UPower.displayDevice.state !== UPowerDeviceState.Charging && !UPower.onBattery
-
-        Text {
-            anchors.centerIn: parent
-            color: Settings.comp0
-            font.pointSize: 12
-            text: ""
-        }
-    }
-
-    Rectangle {
-        color: Settings.bg0
-        height: 32
-        width: 36
-        visible: UPower.displayDevice.isLaptopBattery && (UPower.displayDevice.state === UPowerDeviceState.Charging || UPower.onBattery)
-
-        Text {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 2
-
-            color: UPower.onBattery ? Settings.comp0 : Settings.comp0.replace("#", "#cc")
-            font.pointSize: 10
-            text: ["", "", "", "", ""][Math.floor(UPower.displayDevice.percentage * 4.45)]
-        }
-
-        Text {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 4
-            visible: !UPower.onBattery
-
-            color: Settings.comp0
-            font.pointSize: 8
-            text: ""
-        }
-
-        Text {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: 3
-            font.weight: 600
-            font.family: "JetBrains Mono"
-
-            color: Settings.comp0
-            font.pointSize: 8
-            text: Math.floor(UPower.displayDevice.percentage * 100) + "%"
-        }
-    }
-
-    Rectangle {
-        color: Settings.bg0
-        height: 32
-        Layout.preferredWidth: mic.length == 0 || volume.length == 0 ? 24 : 38
-        visible: Settings.showBarVolume || (Settings.showBarMic && !Audio.micMuted)
-
-        property var mic: !Settings.showBarMic || Audio.micMuted ? "" : " "
-        property var volume: !Settings.showBarVolume ? "" : (Audio.muted ? "󰝟" : Audio.volume == 0 ? "" : Audio.volume < 0.5 ? "" : "")
-
-        Text {
-            color: Settings.comp0
-            text: parent.mic + parent.volume
-
-            font.pointSize: 12
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            anchors.leftMargin: 2
-        }
-    }
-
-    Rectangle {
-        color: Settings.bg0
-        height: 32
+        Layout.preferredHeight: 32
         Layout.preferredWidth: childrenRect.width + 8
-        visible: Audio.output != null && Settings.showBarChannels(Audio.output)
 
-        Text {
-            color: Settings.comp0
-            text: Audio.output?.audio?.channels.length + "ch"
-            font.pointSize: 11
+        RowLayout {
             anchors.verticalCenter: parent.verticalCenter
+            layoutDirection: Qt.LeftToRight
+            Layout.preferredWidth: childrenRect.width
+            spacing: 4
 
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                enabled: Settings.channelsCommand.length > 0
-                acceptedButtons: Qt.LeftButton
-                onClicked: channelAction.running = true
+            Tray {}
+
+            Text {
+                visible: UPower.displayDevice.isLaptopBattery && UPower.displayDevice.state !== UPowerDeviceState.Charging && !UPower.onBattery
+                color: Settings.comp0
+                font.pointSize: 12
+                text: ""
+                rightPadding: 6
             }
-        }
-    }
 
-    Process {
-        id: channelAction
-        running: false
-        command: Settings.channelsCommand
-    }
+            Rectangle {
+                color: "#00000000"
+                Layout.preferredHeight: 32
+                Layout.preferredWidth: 28
+                visible: UPower.displayDevice.isLaptopBattery && (UPower.displayDevice.state === UPowerDeviceState.Charging || UPower.onBattery)
 
-    Rectangle {
-        color: Settings.bg0
-        height: 32
-        Layout.preferredWidth: 28
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 2
 
-        property var textColor: Notifications.showAll || Notifications.all.length === 0 ? Settings.comp0.replace("#", "#80") : Settings.comp0
+                    color: UPower.onBattery ? Settings.comp0 : Settings.comp0.replace("#", "#cc")
+                    font.pointSize: 10
+                    text: ["", "", "", "", ""][Math.floor(UPower.displayDevice.percentage * 4.45)]
+                }
 
-        Text {
-            color: parent.textColor
-            text: ""
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 4
+                    rightPadding: 2
+                    visible: !UPower.onBattery
 
-            font.pointSize: 14
-            anchors.centerIn: parent
-        }
+                    color: Settings.comp0
+                    font.pointSize: 8
+                    text: ""
+                }
 
-        Text {
-            color: Settings.comp0
-            text: ""
-            visible: Notifications.all.length > 0
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.top
+                    anchors.topMargin: 3
+                    font.weight: 600
+                    font.family: "JetBrains Mono"
 
-            font.pointSize: 6
-            font.bold: true
-            font.family: "JetBrains Mono"
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.topMargin: 3
-            anchors.rightMargin: 2
-        }
+                    color: Settings.comp0
+                    font.pointSize: 8
+                    text: Math.floor(UPower.displayDevice.percentage * 100) + "%"
+                }
+            }
 
-        MouseArea {
-            anchors.fill: parent
+            Text {
+                property var mic: !Settings.showBarMic || Audio.micMuted ? "" : " "
+                property var volume: !Settings.showBarVolume ? "" : (Audio.muted ? "󰝟" : Audio.volume == 0 ? "" : Audio.volume < 0.5 ? "" : "")
 
-            enabled: Notifications.all.length > 0
-            hoverEnabled: true
-            acceptedButtons: Qt.LeftButton
-            cursorShape: Notifications.all.length == 0 ? undefined : Qt.PointingHandCursor
+                color: Settings.comp0
+                text: mic + volume
+                visible: Settings.showBarVolume || (Settings.showBarMic && !Audio.micMuted)
 
-            onClicked: event => {
-                Notifications.ipc.toggleAll();
-                event.accepted = true;
+                font.pointSize: 12
+                anchors.verticalCenter: parent.verticalCenter
+                rightPadding: 4
+            }
+
+            Text {
+                color: Settings.comp0
+                text: Audio.output?.audio?.channels.length + "ch"
+                font.pointSize: 11
+                anchors.verticalCenter: parent.verticalCenter
+                visible: Audio.output != null && Settings.showBarChannels(Audio.output)
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    enabled: Settings.channelsCommand.length > 0
+                    acceptedButtons: Qt.LeftButton
+                    onClicked: channelAction.running = true
+                }
+            }
+
+            Process {
+                id: channelAction
+                running: false
+                command: Settings.channelsCommand
+            }
+
+            Text {
+                property var textColor: Notifications.showAll || Notifications.all.length === 0 ? Settings.comp0.replace("#", "#80") : Settings.comp0
+                color: textColor
+                text: ""
+                font.pointSize: 14
+                leftPadding: 4
+                rightPadding: 2
+
+                Text {
+                    color: Settings.comp0
+                    text: ""
+                    visible: Notifications.all.length > 0
+
+                    font.pointSize: 6
+                    font.bold: true
+                    font.family: "JetBrains Mono"
+                    anchors.top: parent.top
+                    anchors.right: parent.right
+                    anchors.topMargin: -1
+                    anchors.rightMargin: 0.5
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    enabled: Notifications.all.length > 0
+                    hoverEnabled: true
+                    acceptedButtons: Qt.LeftButton
+                    cursorShape: Notifications.all.length == 0 ? undefined : Qt.PointingHandCursor
+
+                    onClicked: event => {
+                        Notifications.ipc.toggleAll();
+                        event.accepted = true;
+                    }
+                }
             }
         }
     }
