@@ -84,7 +84,7 @@ RowLayout {
                 visible: Settings.showBarVolume || (Settings.showBarMic && !Audio.micMuted)
 
                 font.pointSize: 12
-                anchors.verticalCenter: parent.verticalCenter
+                Layout.alignment: Qt.AlignVCenter
                 rightPadding: 4
             }
 
@@ -92,7 +92,7 @@ RowLayout {
                 color: Settings.comp0
                 text: Audio.output?.audio?.channels.length + "ch"
                 font.pointSize: 11
-                anchors.verticalCenter: parent.verticalCenter
+                Layout.alignment: Qt.AlignVCenter
                 visible: Audio.output != null && Settings.showBarChannels(Audio.output)
 
                 MouseArea {
