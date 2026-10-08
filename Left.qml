@@ -111,28 +111,4 @@ RowLayout {
             anchors.rightMargin: 4
         }
     }
-
-    Text {
-        color: Settings.plain
-        text: ToplevelManager.activeToplevel?.title.replace(new RegExp("\\s+.\\s+" + ToplevelManager.activeToplevel.appId.replace(/-\w+?$/i, suffix => "(" + suffix + ")?"), "i"), '') || ""
-        visible: ToplevelManager.activeToplevel?.activated || false
-        Layout.preferredWidth: Math.min(implicitWidth, bar.width * 0.4)
-        elide: Text.ElideRight
-
-        font.pointSize: 11
-        font.family: "JetBrains Mono"
-        leftPadding: 8
-
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            enabled: true
-            acceptedButtons: Qt.LeftButton
-
-            onClicked: {
-                if (ToplevelManager.activeToplevel?.activated)
-                    Quickshell.clipboardText = ToplevelManager.activeToplevel.title;
-            }
-        }
-    }
 }

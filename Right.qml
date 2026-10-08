@@ -14,35 +14,6 @@ RowLayout {
     property var bar
 
     Rectangle {
-        color: Settings.bg0.replace("#", "#80")
-        height: 32
-        Layout.preferredWidth: childrenRect.width + 16
-        visible: Media.text
-
-        Text {
-            anchors.centerIn: parent
-            width: Math.min(implicitWidth, bar.width * 0.4 - 16)
-            elide: Text.ElideRight
-
-            text: Media.text
-            color: Media.player?.isPlaying ?Settings.comp0 : Settings.comp0.replace("#", "#cc")
-            font.pointSize: 11
-            font.family: "JetBrains Mono"
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                enabled: true
-                acceptedButtons: Qt.LeftButton
-
-                onClicked: if (Media.text) {
-                    Quickshell.clipboardText = Media.text;
-                }
-            }
-        }
-    }
-
-    Rectangle {
         color: Settings.bg0
         Layout.preferredHeight: 32
         Layout.preferredWidth: childrenRect.width + 8
